@@ -46,7 +46,7 @@ const routes = [
   {
     path: '/users/:id',
     name: 'user',
-    component: () => import('../views/UserProfile.vue')
+    component: () => import('../views/User.vue')
   },
   {
     path: '/signin',
