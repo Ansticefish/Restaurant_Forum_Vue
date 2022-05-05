@@ -1,6 +1,8 @@
 <template>
    <div class="container py-5">
-    <form class="w-100" @submit.prevent.stop="handleSubmit">
+    <form class="w-100" 
+      @submit.stop.prevent="handleSubmit"
+    >
       <div class="text-center mb-4">
         <h1 class="h3 mb-3 font-weight-normal">
           Sign Up
@@ -67,8 +69,9 @@
       <button
         class="btn btn-lg btn-primary btn-block mb-3"
         type="submit"
+        :disabled="isProcessing"
       >
-        Submit
+        {{ isProcessing? 'Sending Data': 'Submit'}}
       </button>
 
       <div class="text-center mb-3">
@@ -88,6 +91,9 @@
 
 
 <script>
+import authorizationAPI from '../apis/authorization'
+import { Toast } from '../utils/helpers'
+
 export default {
   data () {
     return {
@@ -95,18 +101,48 @@ export default {
       email: '',
       password: '',
       passwordCheck: '',
+      isProcessing: false
     }
   },
   methods: {
-    handleSubmit () {
-      if (this.password === this.passwordCheck){
-        console.log('signUpData', JSON.stringify({
+    async handleSubmit () {
+      console.log('submit')
+      try {
+        this.isProcessing = true    
+        const { data } = await authorizationAPI.signUp({
           name: this.name,
           email: this.email,
-          password: this.password
-        }))
-      } else {
-        alert('Please reconfirm your password.')
+          password: this.password,
+          passwordCheck: this.passwordCheck
+        })
+        
+        if ( data.message === '信箱重複！') {
+          Toast.fire({
+            icon: 'warning',
+            title: '此信箱已被註冊，請使用其他信箱註冊'
+          })
+          this.isProcessing = false
+          return
+        } else if ( data.message === '兩次密碼輸入不同！') {
+          Toast.fire({
+            icon: 'warning',
+            title: '兩次輸入密碼不同，請重新輸入'
+          })
+          this.isProcessing = false
+          return
+        } else if (data.status !== 'success'){
+          throw new Error(data.message)
+        }
+
+        this.$router.push({name: 'sign-in'})
+      
+      } catch (error) {
+        this.isProcessing = false
+        console.log('error', error)
+        Toast.fire({
+          icon: 'error',
+          title: '註冊失敗，請重新輸入'
+        })
       }
     }
   }
