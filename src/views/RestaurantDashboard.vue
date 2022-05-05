@@ -122,6 +122,7 @@ export default {
 
       const { id, name, Category, Comments, viewCounts } = dummyData.restaurant
       this.restaurant = {
+        ...this.restaurant,
         id,
         name,
         categoryName: Category.name,

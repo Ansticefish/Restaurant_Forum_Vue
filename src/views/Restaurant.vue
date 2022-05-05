@@ -147,6 +147,7 @@ export default ({
       const { id, name, Category, image, opening_hours: openingHours, tel, address, description, Comments} = restaurant
 
       this.restaurant = {
+        ...this.restaurant,
         id,
         name,
         categoryName: Category.name,

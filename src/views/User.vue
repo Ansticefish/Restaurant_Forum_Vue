@@ -1247,6 +1247,7 @@ export default {
 
       const {id, name, email, image, Comments, FavoritedRestaurants, Followers, Followings} = dummyUser.profile
       this.user = {
+        ...this.user,
         id,
         name,
         image,
