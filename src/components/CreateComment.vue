@@ -26,7 +26,9 @@
 </template>
 
 <script>
-import {v4 as uuidv4} from 'uuid' 
+import { mapState } from 'vuex'
+import commentsAPI from '../apis/comments'
+import { Toast } from '../utils/helpers'
 
 export default {
   name: 'CreateComment',
@@ -41,17 +43,40 @@ export default {
       text: ''
     }
   },
+  computed: {
+    ...mapState( [ 'currentUser' ] )
+  },
   methods: {
-    handleSubmit() {
-      // ask API to add a new comment
+    async handleSubmit() {
+      try {
+        const { data, statusText } = await commentsAPI.create({
+          currentUser: this.currentUser,
+          text: this.text,
+          restaurantId: this.restaurantId
+        })
 
-      this.$emit('after-create-comment', { 
-        commentId: uuidv4(), //from 後端
-        restaurantId: this.restaurantId,
-        text: this.text
-      })
-      this.text = ''
+        const { status, commentId } = data
+
+        if ( status !== 'success' || statusText !== 'OK') {
+          throw new Error(data.message)
+        }
+        
+        this.$emit('after-create-comment', { 
+          commentId: commentId,
+          restaurantId: this.restaurantId,
+          text: this.text
+        })
+
+        this.text = ''  
+      } catch (error) {
+        console.log('error', error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法新增評論，請稍後再試'
+        })
+      }   
     }
   }
 }
+
 </script>

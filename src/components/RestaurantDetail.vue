@@ -9,7 +9,7 @@
     <div class="col-lg-4">
       <img
         class="img-responsive center-block" 
-    :src="restaurant.image"
+    :src="restaurant.image | emptyImage "
         style="width: 250px;margin-bottom: 25px;"
       >
       <div class="contact-info-wrap">
@@ -39,7 +39,7 @@
       <button
         type="button"
         v-if="restaurant.isFavorited"
-        @click="removeFavorite"
+        @click="removeFavorite(restaurant.id)"
         class="btn btn-danger btn-border mr-2"
       >
         移除最愛
@@ -47,7 +47,7 @@
       <button
         type="button"
         v-else
-        @click="addFavorite"
+        @click="addFavorite(restaurant.id)"
         class="btn btn-primary btn-border mr-2"
       >
         加到最愛
@@ -55,7 +55,7 @@
       <button
         type="button"
         v-if="restaurant.isLiked"
-        @click="removeLiked"
+        @click="removeLiked(restaurant.id)"
         class="btn btn-danger like mr-2"
       >
         Unlike
@@ -63,7 +63,7 @@
       <button
         type="button"
         v-else
-        @click="addLiked"
+        @click="addLiked(restaurant.id)"
         class="btn btn-primary like mr-2"
       >
         Like
@@ -73,6 +73,10 @@
 </template>
 
 <script>
+import { emptyImageFilter } from '../utils/mixins' 
+import restaurantsAPI from '../apis/restaurants'
+import { Toast } from '../utils/helpers'
+
 export default {
   name: 'RestaurantDetail',
   props: {
@@ -86,32 +90,100 @@ export default {
       restaurant: this.initialRestaurant
     }
   },
+  mixins: [ emptyImageFilter ],
   methods: {
-    addFavorite () {
-      this.restaurant = {
-        ...this.restaurant,
-        isFavorited: true,
+    async addFavorite ( restaurantId ) {
+      try {
+        const { data, statusText } = await restaurantsAPI.addFavorite( restaurantId )
+
+        if( data.status !== 'success' || statusText !== 'OK') {
+          throw new Error(data.message)
+        }
+
+        this.restaurant = {
+          ...this.restaurant,
+          isFavorited: true,
+        }
+
+      } catch (error) {
+        console.log('error', error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法加入最愛，請稍後再試'
+        })
       }
     },
-    removeFavorite () {
-      this.restaurant = {
-        ...this.restaurant,
-        isFavorited: false,
+    async removeFavorite ( restaurantId ) {
+      try {
+        const { data, statusText } = await restaurantsAPI.removeFavorite( restaurantId )
+
+        if( data.status !== 'success' || statusText !== 'OK') {
+          throw new Error(data.message)
+        }
+
+        this.restaurant = {
+          ...this.restaurant,
+          isFavorited: false,
+        }
+
+      } catch (error) {
+        console.log('error', error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法移除最愛，請稍後再試'
+        })
       }
     },
-    addLiked () {
-      this.restaurant = {
-        ...this.restaurant,
-        isLiked: true,
-      }
+    async addLiked ( restaurantId ) {
+      try {
+        const  { data, statusText } = await restaurantsAPI.addLike( restaurantId )
+        
+        if( data.status !== 'success' || statusText !== 'OK') {
+          throw new Error(data.message)
+        }
+        
+        this.restaurant = {
+          ...this.restaurant,
+          isLiked: true,
+        }
+
+      } catch (error) {
+        console.log('error', error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法按讚，請稍後再試'
+        })
+      }  
     },
-    removeLiked () {
+    async removeLiked ( restaurantId ) {
+      try {
+        const  { data, statusText } = await restaurantsAPI.removeLike( restaurantId )
+        
+        if( data.status !== 'success' || statusText !== 'OK') {
+          throw new Error(data.message)
+        }
+        
+        this.restaurant = {
+          ...this.restaurant,
+          isLiked: false,
+        }
+
+      } catch (error) {
+        console.log('error', error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法移除讚，請稍後再試'
+        })
+      }  
+    }
+  },
+  watch: {
+    initialRestaurant ( newValue ) {
       this.restaurant = {
         ...this.restaurant,
-        isLiked: false,
+        ...newValue
       }
     }
-
   }
 }
 </script>

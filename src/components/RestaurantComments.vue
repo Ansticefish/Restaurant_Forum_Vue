@@ -31,17 +31,10 @@
 
 <script>
 import {fromNowFilters} from '../utils/mixins'
+import { mapState } from 'vuex'
+import commentsAPI from '../apis/comments'
+import { Toast } from '../utils/helpers'
 
-const dummyUser = {
-  currentUser: {
-    id: 1,
-    name: '管理者',
-    email: 'root@example.com',
-    image: 'https://i.pravatar.cc/300',
-    isAdmin: true
-  },
-  isAuthenticated: true
-}
 
 export default {
   props: {
@@ -51,18 +44,27 @@ export default {
     }
   },
   mixins: [fromNowFilters],
-  data () {
-    return {
-      currentUser: dummyUser.currentUser
-    }
+  computed: {
+    ...mapState( [ 'currentUser' ])
   },
   methods: {
-    handleEventClicked (commentId) {
-      console.log('handleEventClicked', commentId)
+    async handleEventClicked (commentId) {
+      try {
+        const { data, statusText } = await commentsAPI.delete( commentId )
+        
+        if (data.status !== 'success' || statusText !== 'OK') {
+          throw new Error(data.message)
+        }
+        
+        this.$emit('after-delete-comment', commentId)
 
-      // Ask database to delete data through API
-
-      this.$emit('after-delete-comment', commentId)
+      } catch (error) {
+        console.log('error', error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法刪除評論，請稍後再試'
+        })
+      }
     }
   }
   

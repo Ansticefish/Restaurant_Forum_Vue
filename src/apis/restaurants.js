@@ -8,6 +8,13 @@ export default {
       headers: { Authorization: ` Bearer ${getToken()}`}
     })
   },
+  getRestaurant ( { restaurantId }) {
+    return apiHelper.get(`/restaurants/${restaurantId}`, {
+      headers: {
+        Authorization: `Bearer ${getToken()}`
+      }
+    })
+  },
   getRestaurantsFeeds() {
     return apiHelper.get('/restaurants/feeds', {
       headers: { Authorization: `Bearer ${getToken()}`}
@@ -20,7 +27,7 @@ export default {
       }
     })
   },
-  addFavorite (restaurantId) {
+  addFavorite ( restaurantId ) {
     return apiHelper.post(`/favorite/${restaurantId}`, null, {
       headers: {
         Authorization: `Bearer ${getToken()}`
@@ -29,6 +36,20 @@ export default {
   },
   removeFavorite( restaurantId ) {
     return apiHelper.delete(`/favorite/${restaurantId}`, {
+      headers: {
+        Authorization: `Bearer ${getToken()}`
+      }
+    })
+  },
+  addLike ( restaurantId ) {
+    return apiHelper.post(`/like/${restaurantId}`, null, {
+      headers: {
+        Authorization: `Bearer ${getToken()}`
+      }
+    })
+  }, 
+  removeLike ( restaurantId ) {
+    return apiHelper.delete(`/like/${restaurantId}`, {
       headers: {
         Authorization: `Bearer ${getToken()}`
       }

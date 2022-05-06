@@ -25,83 +25,8 @@
 </template>
 
 <script>
-const dummyData = {
-    "restaurant": {
-        "id": 1,
-        "name": "Kennith Streich",
-        "tel": "616-536-4282 x00775",
-        "address": "8236 Rosenbaum Lakes",
-        "opening_hours": "08:00",
-        "description": "Voluptas placeat minima et quis id saepe mollitia voluptas.\nEst voluptate praesentium magnam aperiam molestiae.",
-        "image": "https://loremflickr.com/320/240/restaurant,food/?random=90.11810022884907",
-        "viewCounts": 1,
-        "createdAt": "2022-04-18T14:04:25.000Z",
-        "updatedAt": "2022-04-20T13:37:22.000Z",
-        "CategoryId": 2,
-        "Category": {
-            "id": 2,
-            "name": "日本料理",
-            "createdAt": "2022-04-18T14:04:25.000Z",
-            "updatedAt": "2022-04-18T14:04:25.000Z"
-        },
-        "Comments": [
-            {
-                "id": 1,
-                "text": "Ea vel sint est est esse quia.",
-                "UserId": 3,
-                "RestaurantId": 1,
-                "createdAt": "2022-04-18T14:04:25.000Z",
-                "updatedAt": "2022-04-18T14:04:25.000Z",
-                "User": {
-                    "id": 3,
-                    "name": "user2",
-                    "email": "user2@example.com",
-                    "password": "$2a$10$zMNK1ZwWZC9TeM2yFt0aVuaN1rEhPTBgnU97RtebKvklicH18xehy",
-                    "isAdmin": false,
-                    "image": null,
-                    "createdAt": "2022-04-18T14:04:25.000Z",
-                    "updatedAt": "2022-04-18T14:04:25.000Z"
-                }
-            },
-            {
-                "id": 51,
-                "text": "Excepturi quas ad id non exercitationem voluptatibus.",
-                "UserId": 1,
-                "RestaurantId": 1,
-                "createdAt": "2022-04-18T14:04:25.000Z",
-                "updatedAt": "2022-04-18T14:04:25.000Z",
-                "User": {
-                    "id": 1,
-                    "name": "root",
-                    "email": "root@example.com",
-                    "password": "$2a$10$Q/Rfi9vzgzniO5VNKjIlq.o5cHt9vVhi2d8YcQdzehNg3H63hok9.",
-                    "isAdmin": true,
-                    "image": null,
-                    "createdAt": "2022-04-18T14:04:25.000Z",
-                    "updatedAt": "2022-04-18T14:04:25.000Z"
-                }
-            },
-            {
-                "id": 101,
-                "text": "Eaque repudiandae porro voluptates voluptas qui atque.",
-                "UserId": 3,
-                "RestaurantId": 1,
-                "createdAt": "2022-04-18T14:04:25.000Z",
-                "updatedAt": "2022-04-18T14:04:25.000Z",
-                "User": {
-                    "id": 3,
-                    "name": "user2",
-                    "email": "user2@example.com",
-                    "password": "$2a$10$zMNK1ZwWZC9TeM2yFt0aVuaN1rEhPTBgnU97RtebKvklicH18xehy",
-                    "isAdmin": false,
-                    "image": null,
-                    "createdAt": "2022-04-18T14:04:25.000Z",
-                    "updatedAt": "2022-04-18T14:04:25.000Z"
-                }
-            }
-        ]
-    }
-}
+import restaurantsAPI from '../apis/restaurants'
+import { Toast } from '../utils/helpers'
 
 export default {
   name: 'dashboard',
@@ -117,22 +42,35 @@ export default {
     }
   },
   methods: {
-    fetchData (restaurantId) {
-      console.log(restaurantId)
+    async fetchData (restaurantId) {
+      try {
+        const { data, statusText } = await restaurantsAPI.getRestaurant({ restaurantId})
 
-      const { id, name, Category, Comments, viewCounts } = dummyData.restaurant
-      this.restaurant = {
-        ...this.restaurant,
-        id,
-        name,
-        categoryName: Category.name,
-        commentsLength: Comments.length,
-        viewCounts,
-      }
+        if( statusText !== 'OK') {
+          throw new Error(statusText)
+        }
+
+        const { id, name, Category, Comments, viewCounts } = data.restaurant
+        this.restaurant = {
+          ...this.restaurant,
+          id,
+          name,
+          categoryName: Category.name,
+          commentsLength: Comments.length,
+          viewCounts,
+        }
+      } catch (error) {
+        console.log('error', error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法顯示餐廳資訊，請稍後再試'
+        })
+      }  
     }
   },
   created () {
-    this.fetchData(dummyData.restaurant.id)
+    const { id } = this.$route.params
+    this.fetchData(id)
   }
 }
 </script>
