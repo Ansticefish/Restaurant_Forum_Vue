@@ -1,8 +1,17 @@
 <template>
    <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
     <router-link
+      v-if="!currentUser"
       class="navbar-brand"
       to="/"
+    >
+      餐廳評論網
+    </router-link>
+
+    <router-link
+      else
+      class="navbar-brand"
+      to="/restaurants"
     >
       餐廳評論網
     </router-link>
@@ -54,44 +63,25 @@
 </template>
 
 <script>
-// imitate API data 
-const dummyUser = {
-  currentUser: {
-    id: 1,
-    name: '管理者',
-    email: 'root@example.com',
-    image: 'https://i.pravatar.cc/300',
-    isAdmin: true
-  },
-  isAuthenticated: true
-  //why separate currentUser and isAuthenticated?
-  //Because if isAuthenticated is false, that means we could not find relevant data in our database. 
-}
+// // imitate API data 
+// const dummyUser = {
+//   currentUser: {
+//     id: 1,
+//     name: '管理者',
+//     email: 'root@example.com',
+//     image: 'https://i.pravatar.cc/300',
+//     isAdmin: true
+//   },
+//   isAuthenticated: true
+//   //why separate currentUser and isAuthenticated?
+//   //Because if isAuthenticated is false, that means we could not find relevant data in our database. 
+// }
+import { mapState } from 'vuex'
+
 
 export default ({
-  data () {
-    return {
-      currentUser: {
-        id: -1,
-        name: '',
-        email: '',
-        image: '',
-        isAdmin: false
-      },
-      isAuthenticated: false,
-    }
-  },
-  methods: {
-    fetchUser () {
-      this.currentUser = {
-        ...this.currentUser,
-        ...dummyUser.currentUser
-      },
-      this.isAuthenticated = dummyUser.isAuthenticated
-    }
-  },
-  created () {
-    this.fetchUser()
+  computed: {
+    ...mapState([ 'currentUser', 'isAuthenticated'])
   }
 })
 </script>

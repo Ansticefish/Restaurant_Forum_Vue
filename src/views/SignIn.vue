@@ -87,7 +87,7 @@ export default {
           password: this.password
         })
         
-        const { data } = response 
+        const { data } = response
         
         if(data.status !== 'success') {
           throw new Error(data.message)
@@ -95,6 +95,9 @@ export default {
         }
         
         localStorage.setItem('token', data.token)
+        // 向Vuex請求方法、提供資料
+        this.$store.commit('setCurrentUser', data.user)
+
         this.$router.push('/restaurants')
  
       } catch (error) {
