@@ -7,14 +7,7 @@ export default {
       currentUser,
       text,
       restaurantId
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${getToken()}`
-      }
-    }
-    
-    )
+    })
   },
   delete ( commentId ) {
     return apiHelper.delete(`/comments/${commentId}`, {

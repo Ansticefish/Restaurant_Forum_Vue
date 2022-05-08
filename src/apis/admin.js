@@ -1,90 +1,45 @@
 import { apiHelper } from '../utils/helpers'
-const getToken = () => localStorage.getItem('token')
 
 export default {
   categories: {
     get () {
-      return apiHelper.get('/admin/categories', {
-        headers: {
-          Authorization: `Bearer ${getToken()}`
-        }
-      })
+      return apiHelper.get('/admin/categories')
     },
     add({ name }) {
       return apiHelper.post('/admin/categories', {
         name
-      }, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`
-        }
       })
     },
     update({ id, name }) {
-      return apiHelper.put(`/admin/categories/${id}`, { name }, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`
-        }
-      })
+      return apiHelper.put(`/admin/categories/${id}`, { name })
     },
     delete( { id }) {
-      return apiHelper.delete(`/admin/categories/${id}`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`
-        }
-      })
+      return apiHelper.delete(`/admin/categories/${id}`)
     }
   },
   restaurant: {
     create ({ formData }) {
-      return apiHelper.post('/admin/restaurants', formData, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`
-        }
-      } )
+      return apiHelper.post('/admin/restaurants', formData)
     },
     getRestaurants () {
-      return apiHelper.get('/admin/restaurants', {
-        headers: {
-          Authorization: `Bearer ${getToken()}`
-        }
-      })
+      return apiHelper.get('/admin/restaurants')
     },
     getRestaurant ({ restaurantId }) {
-      return apiHelper.get(`/admin/restaurants/${restaurantId}`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`
-        }
-      })
+      return apiHelper.get(`/admin/restaurants/${restaurantId}`)
     },
     delete ({ restaurantId }) {
-      return apiHelper.delete(`/admin/restaurants/${restaurantId}`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`
-        }
-      })
+      return apiHelper.delete(`/admin/restaurants/${restaurantId}`)
     },
     update ({ restaurantId, formData }) {
-      return apiHelper.put(`/admin/restaurants/${restaurantId}`, formData, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`
-        }
-      } )
+      return apiHelper.put(`/admin/restaurants/${restaurantId}`, formData )
     }
   },
   users: {
     get () {
-      return apiHelper.get('/admin/users', {
-        headers: {
-          Authorization: `Bearer ${getToken()}`
-        }
-      })
+      return apiHelper.get('/admin/users')
     },
     update ( { userId, isAdmin }) {
-      return apiHelper.put(`/admin/users/${userId}`, { isAdmin } , {
-        headers: {
-          Authorization: `Bearer ${getToken()}`
-        }
-      })
+      return apiHelper.put(`/admin/users/${userId}`, { isAdmin } )
     }
   }
 }
