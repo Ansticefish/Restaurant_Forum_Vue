@@ -13,7 +13,8 @@ export default new Vuex.Store({
       image: '',
       isAdmin: false
     },
-    isAuthenticated: false
+    isAuthenticated: false,
+    token: ''
   },
   getters: {
   },
@@ -24,6 +25,13 @@ export default new Vuex.Store({
         ...currentUser
       }
       state.isAuthenticated = true
+      state.token = localStorage.getItem('token')
+    },
+    revokeAuthentication (state) {
+      state.currentUser = { }
+      state.isAuthenticated = false
+      state.token = ''
+      localStorage.removeItem('token')
     }
   },
   actions: {
@@ -44,8 +52,13 @@ export default new Vuex.Store({
           image,
           isAdmin
         })
+
+        return true
+
       } catch (error) {
         console.log('error', error)
+        commit('revokeAuthentication')
+        return false 
       }
     }
   },
