@@ -94,7 +94,7 @@ export default {
       }
     },
   },
-   mixins: [emptyImageFilter] 
+   mixins: [emptyImageFilter]
 }
 </script>
 
